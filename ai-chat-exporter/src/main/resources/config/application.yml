@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev
+
+# 日志配置
+logging:
+  level:
+    com.xzf.blog.ai: DEBUG
+    dev.langchain4j: INFO
+

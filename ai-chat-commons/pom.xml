@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xzf.blog.ai</groupId>
+        <artifactId>ai-chat-system</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ai-chat-commons</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ai-chat-commons</name>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xzf</groupId>
+            <artifactId>blog-commons</artifactId>
+        </dependency>
+
+        <!-- 上下文组件 -->
+        <dependency>
+            <groupId>com.xzf</groupId>
+            <artifactId>blog-spring-boot-starter-biz-context</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>
