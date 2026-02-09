@@ -1,0 +1,110 @@
+# DeepSeek API 配置
+system:
+  abstract:
+    systemPrompt: "你是一个专业的文章摘要生成助手，能够准确理解文章内容并提取关键信息，生成简洁、准确的摘要。请为以下文章生成摘要，要求如下：1.不要生成与摘要无关的任何信息，如'如果你需要进一步的信息，可以询问我 2.摘要内容不要超过100个字符 3.摘要内容要简洁、准确、完整，不要省略文章中的关键信息 4.摘要内容要符合中文语言习惯，不要使用英文单词或缩写"
+    model: "deepseek"
+  chat:
+    model: "deepseek"
+    opening-remark: "你好！我是 xzf-blog 的 AI 助手。有什么可以帮助你的吗？"
+    chat-system-prompt: "# 角色 你是一位专业且专注的智能博客助手，能够根据用户提供的知识片段，精准、有条理地回答用户提出的问题。请严格遵循以下准则：## 核心任务 你的回答必须完全基于用户提供的 “相关知识片段”​ 。 如果片段信息充足，请提供完整、清晰的解答。 如果片段信息不足或未涵盖问题，请直接说明“根据提供的知识，无法回答此问题”，切勿自行编造信息。 ## 处理与回答要求 1. 理解与分析：仔细阅读用户问题与所有知识片段，找出与问题直接相关的部分。 2. 精准引用：回答时，可总结或复述片段内容，确保信息准确。 3. 结构化呈现：回答应逻辑清晰，建议使用分点、分段落或总结句式（如“首先…其次…”）。 4. 保持专注：仅处理与博客知识相关的问题，不涉及其它领域。 5. 语言风格：使用中文，保持专业、易懂、友好的语气，精准直接地回答用户问题。 6. 字数限制：尽量控制在200字以内# 文章片段 "
+    deepseek:
+      model-name: "deepseek-chat"
+      base-url: "https://api.deepseek.com/v1"
+      temperature: 0.7
+      max-tokens: 8192
+      log-requests: true
+      log-responses: true
+
+article:
+  split:
+    strategy: slidingWindow
+
+langchain4j:
+  embedding:
+    model:
+      base-url: "https://open.bigmodel.cn/"
+      model-name: "embedding-3"
+    milvus:
+      host: localhost
+      port: 19530
+      collection-name: chat3
+      username: root
+      password: Milvus
+      # 其他 milvus 配置
+
+# 日志配置
+logging:
+  level:
+    com.xzf.blog.ai: DEBUG
+    dev.langchain4j: INFO
+
+# 服务器配置
+server:
+  port: 8191
+
+spring:
+  data:
+    redis:
+      database: 0 # Redis 数据库索引（默认为 0）
+      host: 127.0.0.1 # Redis 服务器地址
+      port: 6379 # Redis 服务器连接端口
+      timeout: 5s # 读超时时间
+      connect-timeout: 5s # 链接超时时间
+      lettuce:
+        pool:
+          max-active: 200 # 连接池最大连接数
+          max-wait: -1ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          min-idle: 0 # 连接池中的最小空闲连接
+          max-idle: 10 # 连接池中的最大空闲连接
+      redisson:
+        enabled: false
+        mode: single
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver # 指定数据库驱动类
+    # 数据库连接信息
+    url: jdbc:mysql://127.0.0.1:3306/blog?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root # 数据库用户名
+    password: root # 数据库密码
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid: # Druid 连接池
+      initial-size: 5 # 初始化连接池大小
+      min-idle: 5 # 最小连接池数量
+      max-active: 20 # 最大连接池数量
+      max-wait: 60000 # 连接时最大等待时间（单位：毫秒）
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000 # 配置多久进行一次检测，检测需要关闭的连接（单位：毫秒）
+      min-evictable-idle-time-millis: 300000 # 配置一个连接在连接池中最小生存的时间（单位：毫秒）
+      max-evictable-idle-time-millis: 900000 # 配置一个连接在连接池中最大生存的时间（单位：毫秒）
+      validation-query: SELECT 1 FROM DUAL # 配置测试连接是否可用的查询 sql
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      web-stat-filter:
+        enabled: true
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/* # 配置监控后台访问路径
+        login-username: admin # 配置监控后台登录的用户名、密码
+        login-password: admin
+      filter:
+        config:
+          enabled: true
+        stat:
+          enabled: true
+          log-slow-sql: true # 开启慢 sql 记录
+          slow-sql-millis: 2000 # 若执行耗时大于 2s，则视为慢 sql
+          merge-sql: true
+        wall: # 防火墙
+          config:
+            multi-statement-allow: true
+rocketmq:
+  name-server: 127.0.0.1:9876 # name server 地址
+  producer:
+    group: blog_group
+    send-message-timeout: 3000 # 消息发送超时时间，默认 3s
+    retry-times-when-send-failed: 3 # 同步发送消息失败后，重试的次数
+    retry-times-when-send-async-failed: 3 # 异步发送消息失败后，重试的次数
+    max-message-size: 4096 # 消息最大大小（单位：字节）
+  consumer:
+    group: blog_group
+    pull-batch-size: 5 # 每次拉取的最大消息数
