@@ -25,10 +25,13 @@ public class ArticleDeleteRAGConsumer implements RocketMQListener<Long> {
     @Autowired
     private RAGService ragService;
 
+    private RateLimiter rateLimiter = RateLimiter.create(10);
+
     @Override
     public void onMessage(Long articleId) {
         log.info("## ArticleDeleteRAGConsumer消费到了 MQ 【智能服务：RAG切分文章内容】, {}...", articleId);
         // 删除切片
+        rateLimiter.tryAcquire();
         ragService.deleteByArticleId(articleId);
     }
 
